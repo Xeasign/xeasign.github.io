@@ -1,0 +1,101 @@
+<html>
+  <head>
+    <title>Привет, мам</title>     
+    <style>
+      #src {
+        width: 500px;
+        height:30px;
+      }
+
+      table {
+        width:100%;
+        border-collapse: collapse;
+      }
+
+      td {
+        border: 1px solid gray;
+      }
+
+      td:first-child{
+        color: #d0d0e0;
+      }
+
+      .singleTable {
+        display: inline-block;
+        width: 40%;
+        max-width: 700px;
+        margin-right:5%;
+      }
+    </style>
+  </head> 
+  <body>
+    <textarea id="src"></textarea>
+    <br>
+    <div class="singleTable">
+      <h3>Петромост</h3>
+      <table>
+        <tbody id="PM">
+          <tr>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="singleTable">
+      <h3>Гранд-плаза</h3>
+      <table>
+        <tbody id="GP">
+          <tr>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+  <script>
+      var inp = document.querySelector('#src');
+      inp.addEventListener('input',_parse);
+
+      function _parse(event) {
+        //var src = event.data; // string
+        var src = inp.value;
+        //console.log(src);
+        var lines = src.replace(/"/g,'').split('0 \n');
+        //console.log(lines.join('\n\n\n'));
+        var result = lines.map(function(s){
+          var kolonki = s.split('\t');
+          return {
+            name: kolonki[1].replace('\n',''),
+            qty:  +kolonki[6]
+          }; 
+        });
+       // console.log(result);
+        var tochki = {PM:[], GP:[]};
+        result.reduce(function(acc, row){
+          var ltr1 = row.name.substr(0,1);
+          if (ltr1 == ltr1.toUpperCase()) acc.GP.push(row);
+          else acc.PM.push(row);
+          return acc;
+        }, tochki);
+        //console.log(tochki)
+        //_out(result, '#tbl');
+
+        Object.keys(tochki).map(function(key){
+          _out(tochki[key], '#'+key);
+        });
+
+      }
+
+      function _out(res, id) {
+        var tbl = document.querySelector(id);
+        var res1 = res.map(function(row, i){
+          var s = '<tr><td>' + (i+1) + '</td><td>' + row.name +'</td><td>' + row.qty +'</td></tr>'
+          return s;
+        }).join('');
+        tbl.innerHTML = res1;
+      }
+
+    </script>
+</html>
